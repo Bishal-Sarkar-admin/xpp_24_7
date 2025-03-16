@@ -77,7 +77,6 @@ async function processXpp() {
     // Execute SQL Query if Generated
 
 
-const sqlCode = Array.isArray(sqlCodeRaw) ? sqlCodeRaw.join("; ") : sqlCodeRaw;
 
 if (typeof sqlCode === "string" && sqlCode.trim() !== "") {
   const queryType = sqlCode.match(/^\w+/)?.[0] || "unknown";
