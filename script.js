@@ -74,21 +74,25 @@ async function processXpp() {
     outputElement.textContent = JSON.stringify(data, null, 2);
 
     // Execute SQL Query if Generated
-    if (sqlCode) {
-      const queryType = sqlCode.match(/^\w+/)?.[0] || "unknown";
 
-      if (queryType !== "unknown" && queryType !== "None" && queryType) {
-        executeQuery(queryType, sqlCode)
-          .then((result) => {
-            outputElementsql.textContent = JSON.stringify(result, null, 2);
-          })
-          .catch((err) => {
-            outputElementsql.textContent = `SQL Execution Error: ${err}`;
-          });
-      } else {
-        outputElementsql.textContent = "No SQL query generated.";
-      }
-    }
+if (typeof sqlCode === "string") {
+  const queryType = sqlCode.match(/^\w+/)?.[0] || "unknown";
+
+  if (queryType !== "unknown" && queryType !== "None" && queryType) {
+    executeQuery(queryType, sqlCode)
+      .then((result) => {
+        outputElementsql.textContent = JSON.stringify(result, null, 2);
+      })
+      .catch((err) => {
+        outputElementsql.textContent = `SQL Execution Error: ${err}`;
+      });
+  } else {
+    outputElementsql.textContent = "No SQL query generated.";
+  }
+} else {
+  console.error("Invalid SQL Code:", sqlCode);
+  outputElementsql.textContent = "Invalid SQL response received.";
+}
   } catch (error) {
     outputElement.textContent = `Error: ${error.message}`;
     console.error("Request failed:", error);
