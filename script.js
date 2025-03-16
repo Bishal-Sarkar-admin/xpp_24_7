@@ -50,7 +50,8 @@ async function processXpp() {
 
     const data = await response.json();
     const xppOutput = data.output || data.OUTPUT || "No X++ output.";
-    const sqlCode = data.sql || data.SQL;
+    const sqlCodeRaw = data.sql || data.SQL || "";
+    const sqlCode = Array.isArray(sqlCodeRaw) ? sqlCodeRaw.join("; ") : sqlCodeRaw;
     const error = data.error || data.ERROR || "none";
 
     // Error Handling
@@ -75,10 +76,13 @@ async function processXpp() {
 
     // Execute SQL Query if Generated
 
-if (typeof sqlCode === "string") {
+
+const sqlCode = Array.isArray(sqlCodeRaw) ? sqlCodeRaw.join("; ") : sqlCodeRaw;
+
+if (typeof sqlCode === "string" && sqlCode.trim() !== "") {
   const queryType = sqlCode.match(/^\w+/)?.[0] || "unknown";
 
-  if (queryType !== "unknown" && queryType !== "None" && queryType) {
+  if (queryType !== "unknown" && queryType !== "None") {
     executeQuery(queryType, sqlCode)
       .then((result) => {
         outputElementsql.textContent = JSON.stringify(result, null, 2);
@@ -90,9 +94,10 @@ if (typeof sqlCode === "string") {
     outputElementsql.textContent = "No SQL query generated.";
   }
 } else {
-  console.error("Invalid SQL Code:", sqlCode);
+  console.error("Invalid SQL response:", sqlCode);
   outputElementsql.textContent = "Invalid SQL response received.";
 }
+
   } catch (error) {
     outputElement.textContent = `Error: ${error.message}`;
     console.error("Request failed:", error);
