@@ -1,3 +1,6 @@
+document.getElementById("xppCode").value =
+  "class XppCode\n{\n public static void main(Args _args){\n{\ninfo('Hello, World! Welcome to X++.');\n }\n}\n}";
+
 const API_URL = "https://ai-compiler-amber.vercel.app/process-xpp"; // Backend URL
 
 async function executeQuery(type, query) {
