@@ -5,20 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>X++ Compiler</title>
     <link rel="stylesheet" href="styles.css" />
+    <style>
+      .loading {
+        display: none;
+        text-align: center;
+        margin: 1rem 0;
+      }
+      .loading.active {
+        display: block;
+      }
+      .error-message {
+        color: #dc3545;
+        background: #f8d7da;
+        padding: 0.5rem;
+        border-radius: 4px;
+        margin: 0.5rem 0;
+      }
+      .success-message {
+        color: #28a745;
+        background: #d4edda;
+        padding: 0.5rem;
+        border-radius: 4px;
+        margin: 0.5rem 0;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <h1>X++ Code Processor</h1>
-      <textarea id="xppCode" placeholder="Enter X++ code here..."></textarea>
-      <button onclick="processXpp()">Run Code</button>
+      <form id="xppForm">
+        <textarea
+          id="xppCode"
+          placeholder="Enter your X++ code here..."
+        ></textarea>
+        <button id="runButton" type="button">Run</button>
+        <button id="clean" type="button">DB Clean</button>
+      </form>
 
-      <h2>Output</h2>
-      <pre id="output"></pre>
-      <pre id="xppoutput"></pre>
-      <pre id="outputSQL"></pre>
-      <pre id="error"></pre>
+      <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+        <p>Processing your request...</p>
+      </div>
+
+      <div id="messages"></div>
+
+      <div class="output-section">
+        <h5>API Response</h5>
+        <pre id="output"></pre>
+
+        <h5>X++ Output Preview</h5>
+        <pre id="xppoutput"></pre>
+
+        <h5>SQL Execution Results</h5>
+        <pre id="outputSQL"></pre>
+
+        <h5>Error</h5>
+        <pre id="error"></pre>
+      </div>
     </div>
 
     <script src="script.js"></script>
+    <script src="clean.js"></script>
   </body>
 </html>
