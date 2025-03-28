@@ -1,12 +1,18 @@
 document.getElementById("clean").addEventListener("click", async () => {
   try {
-    const cleanResponse = await fetch("https://server100sql.onrender.com/api/clean", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
-    });
+    const cleanResponse = await fetch(
+      "https://server100sql.onrender.com/api/clean",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-API-KEY": localStorage.getItem("key")
+            ? localStorage.getItem("key")
+            : localStorage.setItem("key", "1234"),
+        },
+        body: JSON.stringify({}),
+      }
+    );
 
     const response = await cleanResponse.json();
     if (!response.ok) {
