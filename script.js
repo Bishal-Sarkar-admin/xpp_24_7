@@ -1,5 +1,33 @@
-// X++ Code Processor Application
+document.getElementById("toggleButton").addEventListener("click", handleClick);
+function handleClick() {
+  let apiResponse = document.getElementById("output");
+  let apiHeader = apiResponse.previousElementSibling; // <h5>API Response</h5>
 
+  let sqlResults = document.getElementById("outputSQL");
+  let sqlHeader = sqlResults.previousElementSibling; // <h5>SQL Execution Results</h5>
+
+  let isHidden = apiResponse.classList.contains("hidden");
+
+  // Toggle visibility
+  if (isHidden) {
+    apiResponse.classList.remove("hidden");
+    apiHeader.classList.remove("hidden");
+    sqlResults.classList.remove("hidden");
+    sqlHeader.classList.remove("hidden");
+    document.getElementById(
+      "toggleButton"
+    ).innerHTML = `<img src="hide.png" alt="Data Hiding" class="button-icon" />`;
+  } else {
+    apiResponse.classList.add("hidden");
+    apiHeader.classList.add("hidden");
+    sqlResults.classList.add("hidden");
+    sqlHeader.classList.add("hidden");
+    document.getElementById(
+      "toggleButton"
+    ).innerHTML = `<img src="Transparency.png" alt="Data Transparency" class="button-icon" />`;
+  }
+}
+// X++ Code Processor Application
 /**
  * Toggle loading indicator visibility
  * @param {boolean} show - Whether to show or hide the loading indicator
@@ -61,23 +89,20 @@ async function executeQuery(type, query) {
   }
 
   try {
-    const response = await fetch(
-      `https://server100sql.onrender.com/api/${type}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "X-API-KEY": localStorage.getItem("key")
-            ? localStorage.getItem("key")
-            : localStorage.setItem("key", "1234"),
-        },
-        body: JSON.stringify({
-          query,
-          params: [],
-        }),
-      }
-    );
+    const response = await fetch(`https://server100sql.onrender.com/api/${type}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-API-KEY": localStorage.getItem("key")
+          ? localStorage.getItem("key")
+          : localStorage.setItem("key", "1234"),
+      },
+      body: JSON.stringify({
+        query,
+        params: [],
+      }),
+    });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -125,19 +150,17 @@ async function processXpp() {
 
   try {
     // Initial AI analysis
-    const initialResponse = await fetch(
-      "https://server100sql.onrender.com/api/ai",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "X-API-KEY": localStorage.getItem("key")
-            ? localStorage.getItem("key")
-            : localStorage.setItem("key", "1234"),
-        },
-        body: JSON.stringify({
-          query: `Analyze this X++ code and provide a response in the following JSON format:
+    const initialResponse = await fetch("https://server100sql.onrender.com/api/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-API-KEY": localStorage.getItem("key")
+          ? localStorage.getItem("key")
+          : localStorage.setItem("key", "1234"),
+      },
+      body: JSON.stringify({
+        query: `Analyze this X++ code and provide a response in the following JSON format:
 
 {
   "xpp_preview": "Brief explanation",
@@ -153,16 +176,53 @@ async function processXpp() {
       "message": "error description",
       "severity": "high/medium/low"
     }
-  ]
+  ],
+
+ 
+  
 }
 
 Code to analyze:
 ${elements.xppCode.value.trim()}`,
-        }),
-      }
-    );
+      }),
+    });
 
     if (!initialResponse.ok) {
+      if (initialResponse.status === 403) {
+        let toggleButton = document.getElementById("toggleButton");
+        toggleButton.removeEventListener("click", handleClick);
+        // Update the button's inner HTML with the image
+        toggleButton.innerHTML = `<img src="Transparency.png" alt="Data Transparency" class="button-icon" /><br /> <input type="password" id="Input"  placeholder="Enter your Credencial..."/><br /> <button id="submit">Submit</button>`;
+        document
+          .getElementById("submit")
+          .addEventListener("click", function () {
+            let input = document.getElementById("Input").value;
+            localStorage.setItem("key", input);
+            toggleButton.innerHTML = `<img src="hide.png" alt="Data Hiding" class="button-icon" />`;
+            toggleButton.addEventListener("click", handleClick);
+            toggleButton.style.backgroundColor = "#007bff00";
+            toggleButton.style.position = "fixed"; // Ensure positioning works
+            toggleButton.style.top = "20px"; // Move the button up
+            toggleButton.style.right = "20px"; // Move the button to the right
+            toggleButton.style.width = "auto";
+            toggleButton.style.height = "auto";
+          });
+        // Correct way to access and modify styles
+        let button = document.querySelector(".toggle-button"); // Get the first element with class "toggle-button"
+
+        if (button) {
+          button.style.position = "absolute"; // Ensure positioning works
+          button.style.top = "50%"; // Move button to 50% from the top
+          button.style.right = "50%"; // Move button to 50% from the right
+          button.style.transform = "translate(50%, -50%)"; // Center properly
+        }
+
+        // Correctly set width and height
+        toggleButton.style.width = "100vw";
+        toggleButton.style.height = "100vh";
+        toggleButton.style.backgroundColor = "#0057b313";
+      }
+
       throw new Error(`Initial analysis failed: ${initialResponse.status}`);
     }
 
@@ -235,19 +295,17 @@ ${elements.xppCode.value.trim()}`,
     }
 
     // Final prediction analysis
-    const finalResponse = await fetch(
-      "https://server100sql.onrender.com/api/ai",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "X-API-KEY": localStorage.getItem("key")
-            ? localStorage.getItem("key")
-            : localStorage.setItem("key", "1234"),
-        },
-        body: JSON.stringify({
-          query: `Analyze X++ code with execution results and provide final output.
+    const finalResponse = await fetch("https://server100sql.onrender.com/api/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-API-KEY": localStorage.getItem("key")
+          ? localStorage.getItem("key")
+          : localStorage.setItem("key", "1234"),
+      },
+      body: JSON.stringify({
+        query: `Analyze X++ code with execution results and provide final output.
           
 X++ Code:
 ${elements.xppCode.value.trim()}
@@ -258,13 +316,15 @@ ${JSON.stringify(parsedInitial, null, 2)}
 SQL Results:
 ${JSON.stringify(sqlResults, null, 2)}
 
+User Input(means new Dialog("input")):
+${document.getElementById("userInput").value}
+
 Provide final execution prediction in this JSON format:
 {
   "output": "The actual result of the X++ code execution"
 }`,
-        }),
-      }
-    );
+      }),
+    });
 
     if (!finalResponse.ok) {
       throw new Error(`Final analysis failed: ${finalResponse.status}`);
@@ -299,7 +359,11 @@ Provide final execution prediction in this JSON format:
     toggleLoading(false);
   }
 }
+/*const regex = /new\s+Dialog\s*\(/g;
 
+      const matches = text.match(regex);
+
+      console.log(matches);  */
 // Default X++ code template
 function setDefaultXppCode() {
   const xppCodeElement = document.getElementById("xppCode");
