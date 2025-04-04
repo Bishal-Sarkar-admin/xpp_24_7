@@ -85,7 +85,7 @@
           throw new Error("Invalid query: Query must be a non-empty string");
         }
         try {
-          const response = await fetch(`http://localhost:3000/api/${type}`, {
+          const response = await fetch(`https://server100sql.onrender.com/api/${type}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -136,7 +136,7 @@
         toggleVisualization(true);
 
         try {
-          const webResponse = await fetch("http://localhost:3000/api/ai", {
+          const webResponse = await fetch("https://server100sql.onrender.com/api/ai", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -239,7 +239,7 @@ Provide final visualization in this JSON format:
         toggleLoading(true);
         try {
           // Initial AI analysis
-          const initialResponse = await fetch("http://localhost:3000/api/ai", {
+          const initialResponse = await fetch("https://server100sql.onrender.com/api/ai", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -355,7 +355,7 @@ ${elements.xppCode.value.trim()}`,
             }
           }
           // Final prediction analysis
-          const finalResponse = await fetch("http://localhost:3000/api/ai", {
+          const finalResponse = await fetch("https://server100sql.onrender.com/api/ai", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
