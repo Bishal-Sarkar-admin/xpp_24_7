@@ -5,79 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>X++ Compiler</title>
     <link rel="stylesheet" href="styles.css" />
-    <style>
-      .loading {
-        display: none;
-        text-align: center;
-        margin: 1rem 0;
-      }
-      .loading.active {
-        display: block;
-      }
-      .error-message {
-        color: #dc3545;
-        background: #f8d7da;
-        padding: 0.5rem;
-        border-radius: 4px;
-        margin: 0.5rem 0;
-      }
-      .success-message {
-        color: #28a745;
-        background: #d4edda;
-        padding: 0.5rem;
-        border-radius: 4px;
-        margin: 0.5rem 0;
-      }
-    </style>
+    
   </head>
   <body>
-    <button id="toggleButton" class="toggle-button">
+   <!-- Toggle Button for API response -->
+    <button
+      id="toggleButton"
+      class="toggle-button"
+      aria-label="Toggle API response visibility"
+    >
       <img src="Transparency.png" alt="Data Transparency" class="button-icon" />
     </button>
-    <div class="container">
-      <h1>X++ Code Processor</h1>
-      <form id="xppForm">
-        <textarea
-          id="xppCode"
-          placeholder="Enter your X++ code here..."
-          oninput="checkDialog()"
-        ></textarea>
-        <button id="runButton" type="button">Run</button>
-        <button id="clean" type="button">DB Clean</button>
-      </form>
 
-      <div class="loading" id="loadingIndicator">
-        <div class="spinner"></div>
-        <p>Processing your request...</p>
+    <!-- Main Content Containers -->
+    <div class="two-containers">
+      <div class="container">
+        <h1>X++ Code Processor</h1>
+        <form id="xppForm">
+          <textarea
+            id="xppCode"
+            placeholder="Enter your X++ code here..."
+            oninput="checkDialog()"
+          ></textarea>
+          <div class="button-row">
+            <button id="runButton" type="button">Run</button>
+            <button id="clean" type="button">DB Clean</button>
+            <button id="showWebOutputButton" type="button">
+              Show Visual Output
+            </button>
+          </div>
+        </form>
+
+        <!-- Loading Indicator -->
+        <div class="loading" id="loadingIndicator">
+          <div class="spinner"></div>
+          <p>Processing your request...</p>
+        </div>
+
+        <!-- Message Display -->
+        <div id="messages" aria-live="polite"></div>
+
+        <!-- Output Section -->
+        <div class="output-section">
+          <textarea
+            disabled
+            id="userInput"
+            placeholder="Enter Your Input Data."
+          ></textarea>
+          <h5 class="hidden">API Response</h5>
+          <pre id="output" class="hidden"></pre>
+          <h5>X++ Output Preview</h5>
+          <pre id="xppoutput"></pre>
+          <h5 class="hidden">SQL Execution Results</h5>
+          <pre id="outputSQL" class="hidden"></pre>
+          <h5>Error</h5>
+          <pre id="error"></pre>
+        </div>
       </div>
 
-      <div id="messages"></div>
-
-      <div class="output-section">
-        <textarea
-          disabled
-          id="userInput"
-          placeholder="Enter Your Input Data."
-        ></textarea>
-        <h5 class="hidden">API Response</h5>
-        <pre id="output" class="hidden"></pre>
-
-        <h5>X++ Output Preview</h5>
-        <pre id="xppoutput"></pre>
-
-        <h5 class="hidden">SQL Execution Results</h5>
-        <pre id="outputSQL" class="hidden"></pre>
-
-        <h5>Error</h5>
-        <pre id="error"></pre>
+      <!-- Visualization Container -->
+      <div id="visualizationContainer" class="container">
+        <h1>Visual Output Preview</h1>
+        <pre id="xppoutput-htmlcssjs"></pre>
       </div>
     </div>
+
+    <!-- JavaScript Functions -->
     <script>
+      // Enable user input if X++ code contains a new Dialog instance
       function checkDialog() {
         const xppCode = document.getElementById("xppCode").value;
         const userInput = document.getElementById("userInput");
-        const regex = /new\s+Dialog\s*\(/; // Matches 'new Dialog(' with optional spaces
-
+        const regex = /new\s+Dialog\s*\(/;
         if (regex.test(xppCode)) {
           userInput.removeAttribute("disabled");
         } else {
