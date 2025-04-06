@@ -1,5 +1,4 @@
- /* Reset and base styles */
-      * {
+  * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -121,6 +120,9 @@
         display: flex;
         gap: 10px;
         margin-bottom: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
       }
       #runButton,
       #clean,
@@ -294,4 +296,30 @@
       }
       .hidden {
         display: none !important;
+      }
+      #ErrorFixed {
+        background-color: #4caf50; /* Green background */
+        border: none;
+        color: white; /* White text */
+        padding: 12px 24px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 8px; /* Rounded corners */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      #ErrorFixed:hover {
+        background-color: #45a049; /* Darker green on hover */
+      }
+      /* CSS */
+      .disabled-button {
+        background-color: grey;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: not-allowed;
       }
