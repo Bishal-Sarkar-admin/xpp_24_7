@@ -27,12 +27,21 @@
             placeholder="Enter your X++ code here..."
             oninput="checkDialog()"
           ></textarea>
-          <div class="button-row">
+         <div class="button-row">
             <button id="runButton" type="button">Run</button>
-            <button id="clean" type="button">DB Clean</button>
-            <button id="showWebOutputButton" type="button">
+            <button id="clean" type="button" disabled style="display: none">
+              DB Clean 
+            </button>
+            <button
+              id="showweboutputbutton"
+              type="button"
+              disabled
+              style="display: none">
               Show Visual Output
             </button>
+
+            <button id="ErrorFixed" disabled type="button">ErrorFixed</button>
+          </div>
           </div>
         </form>
 
