@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>X++ Compiler</title>
     <link rel="stylesheet" href="styles.css" />
-    
+    <style></style>
   </head>
   <body>
-  <!-- Toggle Button for API response -->
+    <!-- Toggle Button for API response -->
     <button
       id="toggleButton"
       class="toggle-button"
@@ -16,32 +16,26 @@
     >
       <img src="Transparency.png" alt="Data Transparency" class="button-icon" />
     </button>
-
+    <p style="display: none"><span id="currentWord"></span></p>
+    <ul id="suggestions" class="suggestion-box"></ul>
     <!-- Main Content Containers -->
     <div class="two-containers">
       <div class="container">
-        <h1>X++ Code Processor</h1>
         <form id="xppForm">
           <textarea
             id="xppCode"
             placeholder="Enter your X++ code here..."
-            oninput="checkDialog()"
+            oninput="checkDialog(),getCurrentWord(event),handleTyping(event)"
           ></textarea>
           <div class="button-row">
             <button id="runButton" type="button">Run</button>
             <button id="clean" type="button" disabled style="display: none">
-              DB Clean Button
+              DB Clean
             </button>
-            <button
-              id="showweboutputbutton"
-              type="button"
-              disabled
-              style="display: none"
-            >
-              Show Visual Output Button
-            </button>
-
             <button id="ErrorFixed" disabled type="button">ErrorFixed</button>
+            <button onclick="TotalTable()" id="DBTables" type="button">
+              DB Tables
+            </button>
           </div>
         </form>
 
@@ -71,30 +65,18 @@
           <pre id="error"></pre>
         </div>
       </div>
-
-      <!-- Visualization Container -->
-      <div id="visualizationContainer" class="container">
-        <h1>Visual Output Preview</h1>
-        <pre id="xppoutput-htmlcssjs"></pre>
-      </div>
+      <div id="tableNames"></div>
     </div>
 
-    <!-- JavaScript Functions -->
-    <script>
-      // Enable user input if X++ code contains a new Dialog instance
-      function checkDialog() {
-        const xppCode = document.getElementById("xppCode").value;
-        const userInput = document.getElementById("userInput");
-        const regex = /new\s+Dialog\s*\(/;
-        if (regex.test(xppCode)) {
-          userInput.removeAttribute("disabled");
-        } else {
-          userInput.setAttribute("disabled", "true");
-        }
-      }
-    </script>
-    <script src="script.js"></script>
-    <script src="errorFixed.js"></script>
-    <script src="clean.js"></script>
+    <script></script>
+
+    <!-- External Script -->
+    <script src="clean.js" defer></script>
+    <script src="table.js" defer></script>
+    <script src="spinner.js" defer></script>
+    <script src="final.js" defer></script>
+    <script src="dialog.js" defer></script>
+    <script src="script.js" defer></script>
+    <script src="suggestions.js" defer></script>
   </body>
 </html>
