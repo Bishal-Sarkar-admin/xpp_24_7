@@ -10,7 +10,7 @@ const headers = {
 
 async function TotalTable() {
   try {
-    const tableResponse = await fetch("http://localhost:3000/api/select", {
+    const tableResponse = await fetch("https://server100sql.onrender.com/api/select", {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -90,7 +90,7 @@ async function TotalTable() {
 
 async function ShowTableSchema(tableName) {
   try {
-    const schemaResponse = await fetch("http://localhost:3000/api/select", {
+    const schemaResponse = await fetch("https://server100sql.onrender.com/api/select", {
       method: "POST",
       headers,
       body: JSON.stringify({
