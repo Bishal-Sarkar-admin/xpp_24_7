@@ -266,6 +266,10 @@ Provide final execution prediction in this JSON format:
       throw new Error("Failed to parse final output: " + parseError.message);
     }
     showMessage("Processing completed successfully!", "success");
+     document.body.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
   } catch (error) {
     console.error("Processing failed:", error);
     showMessage(`Error: ${error.message}`, "error");
