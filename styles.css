@@ -300,7 +300,8 @@ pre {
 .hidden {
   display: none !important;
 }
-#ErrorFixed {
+#ErrorFixed,
+#save {
   background-color: #4caf50; /* Green background */
   border: none;
   color: white; /* White text */
@@ -314,7 +315,8 @@ pre {
   transition: background-color 0.3s ease;
 }
 
-#ErrorFixed:hover {
+#ErrorFixed:hover,
+#save:hover {
   background-color: #45a049; /* Darker green on hover */
 }
 /* CSS */
