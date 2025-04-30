@@ -1,4 +1,4 @@
-const link= localStorage.getItem("link")||"https://server100sql.onrender.com/api/ai";
+
 
 // Toggle extra API and SQL output visibility
 document
@@ -115,6 +115,7 @@ async function processXpp() {
 
   toggleLoading(true);
   try {
+    const link= localStorage.getItem("link")||"https://server100sql.onrender.com/api/ai";
     // Initial AI analysis
     const initialResponse = await fetch(link, {
       method: "POST",
