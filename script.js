@@ -1,3 +1,5 @@
+const link= localStorage.getItem("link")||"https://server100sql.onrender.com/api/ai";
+
 // Toggle extra API and SQL output visibility
 document
   .getElementById("toggleButton")
@@ -114,7 +116,7 @@ async function processXpp() {
   toggleLoading(true);
   try {
     // Initial AI analysis
-    const initialResponse = await fetch("https://server100sql.onrender.com/api/ai", {
+    const initialResponse = await fetch(link, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -214,7 +216,7 @@ ${elements.xppCode.value.trim()}`,
       }
     }
     // Final prediction analysis
-    const finalResponse = await fetch("https://server100sql.onrender.com/api/ai", {
+    const finalResponse = await fetch(link, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
