@@ -8,6 +8,127 @@
     <style></style>
   </head>
   <body>
+<div id="z-index-100">
+      <button id="btn" type="button">➕</button>
+      <section id="TableCreate"></section>
+
+      <!-- Table Name Modal -->
+      <div id="tableNameModal" class="modal">
+        <div class="modal-content">
+          <h2>Create New Table</h2>
+          <div class="form-group">
+            <label for="tableName">Table Name:</label>
+            <input
+              type="text"
+              id="tableName"
+              placeholder="Enter table name"
+              maxlength="50"
+              pattern="[a-zA-Z0-9_]+"
+            />
+            <small>Only letters, numbers, and underscores allowed</small>
+          </div>
+          <div class="modal-buttons">
+            <button type="button" class="btn-add" id="createTableBtn">
+              Create
+            </button>
+            <button type="button" class="btn-remove" id="cancelTableBtn">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Field Modal -->
+      <div id="fieldModal" class="modal">
+        <div class="modal-content">
+          <h2>Add New Field</h2>
+          <div class="form-group">
+            <label for="fieldName">Field Name:</label>
+            <input
+              type="text"
+              id="fieldName"
+              placeholder="Enter field name"
+              maxlength="50"
+              pattern="[a-zA-Z0-9_]+"
+            />
+            <small>Only letters, numbers, and underscores allowed</small>
+          </div>
+          <div class="form-group">
+            <label for="fieldType">Data Type:</label>
+            <select id="fieldType">
+              <option value="VARCHAR(20)">STR(20)</option>
+              <option value="VARCHAR(30)">STR(30)</option>
+              <option value="VARCHAR(50)">STR(50)</option>
+              <option value="VARCHAR(100)">STR(100)</option>
+              <option value="INT">INT</option>
+              <option value="FLOAT">Real</option>
+              <option value="NUMBER">NUMBER</option>
+              <option value="DATE">DATE</option>
+              <option value="TIME">TIME</option>
+              <option value="BOOLEAN">BOOLEAN</option>
+              <option value="TEXT">AnyType</option>
+            </select>
+          </div>
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="notNull" />
+            <label for="notNull">Not Null</label>
+          </div>
+          <div class="form-group">
+            <label for="defaultValue">Default Value:</label>
+            <input
+              type="text"
+              id="defaultValue"
+              placeholder="Default value (optional)"
+              maxlength="100"
+            />
+          </div>
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="primaryKey" />
+            <label for="primaryKey">Primary Key</label>
+          </div>
+          <div class="modal-buttons">
+            <button type="button" class="btn-add" id="addFieldBtn">Add</button>
+            <button type="button" class="btn-remove" id="cancelFieldBtn">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Modal -->
+      <div id="settingsModal" class="modal">
+        <div class="modal-content">
+          <h2>API Settings</h2>
+          <div class="form-group">
+            <label for="apiEndpoint">API Endpoint:</label>
+            <input
+              type="url"
+              id="apiEndpoint"
+              placeholder="https://example.com/api/create"
+            />
+          </div>
+          <div class="form-group">
+            <label for="apiKey">API Key:</label>
+            <input
+              type="password"
+              id="apiKey"
+              placeholder="Enter your API key"
+            />
+          </div>
+          <div class="modal-buttons">
+            <button type="button" class="btn-add" id="saveSettingsBtn">
+              Save
+            </button>
+            <button type="button" class="btn-remove" id="cancelSettingsBtn">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Notification -->
+      <div id="toast" class="toast">Table saved successfully!</div>
+    </div>
     <!-- Toggle Button for API response -->
     <button
       id="toggleButton"
