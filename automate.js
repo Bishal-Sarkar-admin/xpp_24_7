@@ -573,7 +573,7 @@ async function runAutomation(data) {
 //
 async function aiRes(UserInput) {
   const response = await fetch(
-    "[http://127.0.0.1:3000/api/ai](http://127.0.0.1:3000/api/ai)",
+    "https://server100sql.onrender.com/api/ai",
     {
       method: "POST",
       headers: {
