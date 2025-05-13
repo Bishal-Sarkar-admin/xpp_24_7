@@ -1,10 +1,4 @@
-/**
- * Enhanced Table Automation Agent with localStorage Persistence
- *
- * This script automatically populates database tables based on a JSON schema definition,
- * executes X++ code, handles table deletion operations, and stores user interaction
- * history in localStorage for improved personalization.
- */
+
 
 class EnhancedTableAutomationAgent {
   constructor(jsonData) {
@@ -26,75 +20,6 @@ class EnhancedTableAutomationAgent {
     // Track operations for logging
     this.operations = [];
     this.logOperation("Agent initialized with table: " + jsonData.name);
-
-    // Initialize interaction history from localStorage or create new
-    this.userHistory = this.loadUserHistory();
-  }
-
-  /**
-   * Load user interaction history from localStorage
-   */
-  loadUserHistory() {
-    try {
-      const storedHistory = localStorage.getItem("tableAutomationHistory");
-      return storedHistory
-        ? JSON.parse(storedHistory)
-        : {
-            tables: {},
-            interactions: [],
-            preferences: {},
-            lastSession: new Date().toISOString(),
-          };
-    } catch (error) {
-      console.warn("Error loading user history from localStorage:", error);
-      return {
-        tables: {},
-        interactions: [],
-        preferences: {},
-        lastSession: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * Save user interaction history to localStorage
-   */
-  saveUserHistory() {
-    try {
-      localStorage.setItem(
-        "tableAutomationHistory",
-        JSON.stringify(this.userHistory)
-      );
-    } catch (error) {
-      console.warn("Error saving user history to localStorage:", error);
-    }
-  }
-
-  /**
-   * Update user history with current operation
-   */
-  updateUserHistory() {
-    // Update tables record
-    this.userHistory.tables[this.jsonData.name] = {
-      fields: this.jsonData.fields,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    // Add to interactions
-    this.userHistory.interactions.push({
-      action: "create_table",
-      tableName: this.jsonData.name,
-      timestamp: new Date().toISOString(),
-      fieldCount: this.jsonData.fields.length,
-      deletedTable: this.jsonData.delete || null,
-    });
-
-    // Update session info
-    this.userHistory.lastSession = new Date().toISOString();
-
-    // Save to localStorage
-    this.saveUserHistory();
   }
 
   /**
@@ -147,14 +72,10 @@ class EnhancedTableAutomationAgent {
         await this.executeCode(this.jsonData.code);
       }
 
-      // Update user history with this operation
-      this.updateUserHistory();
-
       this.logOperation("Table automation workflow completed successfully!");
       return {
         success: true,
         operations: this.operations,
-        historyUpdated: true,
       };
     } catch (error) {
       this.logOperation(`ERROR: ${error.message}`);
@@ -458,15 +379,6 @@ class EnhancedTableAutomationAgent {
           try {
             const deleteCode = `delete_from ${tableName}`;
             await this.executeCode(deleteCode);
-
-            // Update history to remove the table
-            if (this.userHistory.tables[tableName]) {
-              this.userHistory.tables[tableName].deleted = true;
-              this.userHistory.tables[tableName].deletedAt =
-                new Date().toISOString();
-              this.saveUserHistory();
-            }
-
             resolve();
           } catch (e) {
             reject(
@@ -521,66 +433,6 @@ class EnhancedTableAutomationAgent {
   }
 
   /**
-   * Get suggestions for table improvements based on history
-   */
-  getSuggestions() {
-    // This is a placeholder for recommendation logic
-    // In a full implementation, this would analyze past table patterns
-    const suggestions = [];
-
-    // Check if any common fields are missing
-    const commonFields = this.getCommonFieldsFromHistory();
-    const currentFieldNames = this.jsonData.fields.map((f) =>
-      f.name.toLowerCase()
-    );
-
-    for (const commonField of commonFields) {
-      if (!currentFieldNames.includes(commonField.name.toLowerCase())) {
-        suggestions.push({
-          type: "missing_common_field",
-          field: commonField,
-          message: `Consider adding the commonly used field "${commonField.name}" of type ${commonField.type}`,
-        });
-      }
-    }
-
-    return suggestions;
-  }
-
-  /**
-   * Extract common fields from user history
-   */
-  getCommonFieldsFromHistory() {
-    // This is a simplified implementation
-    // A real implementation would do more sophisticated pattern analysis
-    const fieldCounts = {};
-
-    // Count field occurrences across tables
-    Object.values(this.userHistory.tables).forEach((table) => {
-      if (!table.deleted) {
-        table.fields.forEach((field) => {
-          const key = `${field.name.toLowerCase()}|${field.type}`;
-          fieldCounts[key] = (fieldCounts[key] || 0) + 1;
-        });
-      }
-    });
-
-    // Find fields that appear in at least 2 tables
-    const commonFields = [];
-    for (const [key, count] of Object.entries(fieldCounts)) {
-      if (count >= 2) {
-        const [name, type] = key.split("|");
-        commonFields.push({
-          name: name.charAt(0).toUpperCase() + name.slice(1), // Capitalize first letter
-          type: type,
-        });
-      }
-    }
-
-    return commonFields;
-  }
-
-  /**
    * Output a detailed report of what was done
    */
   generateReport() {
@@ -591,380 +443,82 @@ class EnhancedTableAutomationAgent {
       codeExecuted: this.jsonData.code ? "Yes" : "No",
       operations: this.operations,
       timestamp: new Date().toISOString(),
-      suggestions: this.getSuggestions(),
-      userStats: {
-        totalTables: Object.keys(this.userHistory.tables).length,
-        totalInteractions: this.userHistory.interactions.length,
-        lastSession: this.userHistory.lastSession,
-      },
     };
   }
-
-  /**
-   * Get previously created tables from history
-   */
-  static getPreviousTables() {
-    try {
-      const storedHistory = localStorage.getItem("tableAutomationHistory");
-      const history = storedHistory
-        ? JSON.parse(storedHistory)
-        : { tables: {} };
-
-      // Return active (non-deleted) tables
-      return Object.entries(history.tables)
-        .filter(([_, table]) => !table.deleted)
-        .map(([name, table]) => ({
-          name,
-          fieldCount: table.fields.length,
-          createdAt: table.createdAt,
-        }));
-    } catch (error) {
-      console.warn("Error accessing table history:", error);
-      return [];
-    }
-  }
 }
 
-/**
- * TableAutomationManager - Manages AI interaction and history
- * This class serves as the interface between the AI assistant and the automation agent
- */
-class TableAutomationManager {
-  constructor() {
-    // Load conversation history from localStorage
-    this.conversationHistory = this.loadConversationHistory();
-    this.setupEventListeners();
-  }
-
-  /**
-   * Load conversation history from localStorage
-   */
-  loadConversationHistory() {
-    try {
-      const storedHistory = localStorage.getItem(
-        "tableAutomationConversations"
-      );
-      return storedHistory
-        ? JSON.parse(storedHistory)
-        : {
-            conversations: [],
-            preferences: {},
-            lastInteraction: null,
-          };
-    } catch (error) {
-      console.warn("Error loading conversation history:", error);
-      return {
-        conversations: [],
-        preferences: {},
-        lastInteraction: null,
-      };
-    }
-  }
-
-  /**
-   * Save conversation history to localStorage
-   */
-  saveConversationHistory() {
-    try {
-      localStorage.setItem(
-        "tableAutomationConversations",
-        JSON.stringify(this.conversationHistory)
-      );
-    } catch (error) {
-      console.warn("Error saving conversation history:", error);
-    }
-  }
-
-  /**
-   * Record a new conversation entry
-   */
-  recordConversation(userInput, aiResponse, tableCreated = null) {
-    this.conversationHistory.conversations.push({
-      timestamp: new Date().toISOString(),
-      userInput,
-      aiResponse,
-      tableCreated,
-    });
-
-    this.conversationHistory.lastInteraction = new Date().toISOString();
-    this.saveConversationHistory();
-  }
-
-  /**
-   * Set up event listeners for the chat interface
-   */
-  setupEventListeners() {
-    // Example implementation - would need customization based on actual UI
-    const sendButton = document.getElementById("sendButton");
-    const userInput = document.getElementById("userInput");
-
-    if (sendButton && userInput) {
-      sendButton.addEventListener("click", () => {
-        const input = userInput.value.trim();
-        if (input) {
-          this.processUserInput(input);
-          userInput.value = "";
-        }
-      });
-
-      userInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          const input = userInput.value.trim();
-          if (input) {
-            this.processUserInput(input);
-            userInput.value = "";
-          }
-        }
-      });
-    }
-  }
-
-  /**
-   * Process user input and generate AI response
-   * This would typically involve sending to an actual AI service
-   * Here we simulate with some basic pattern matching
-   */
-  processUserInput(input) {
-    // Display user message
-    this.displayMessage(input, "user");
-
-    // In a real implementation, this would call the AI service
-    // For demo purposes, we'll use a simple response generator
-    setTimeout(() => {
-      const response = this.generateResponse(input);
-      this.displayMessage(response.message, "ai");
-
-      // If the AI generated a table configuration, execute it
-      if (response.jsonData) {
-        this.executeTableAutomation(response.jsonData);
-      }
-    }, 500);
-  }
-
-  /**
-   * Generate AI response based on user input
-   * This is a placeholder for actual AI integration
-   */
-  generateResponse(input) {
-    // Simplified response logic - in production this would be an AI service
-    const lowerInput = input.toLowerCase();
-
-    // Simple pattern matching
-    if (lowerInput.includes("create") && lowerInput.includes("table")) {
-      // Extract table name - very simplified example
-      const nameMatch = input.match(
-        /table\s+(?:named|called)?\s*["']?([a-zA-Z0-9_]+)["']?/i
-      );
-      const tableName = nameMatch ? nameMatch[1] : "NewTable";
-
-      // Basic field detection - extremely simplified
-      const fields = [];
-
-      if (lowerInput.includes("customer")) {
-        fields.push(
-          {
-            name: "CustomerID",
-            type: "STR(20)",
-            notNull: true,
-            primaryKey: true,
-          },
-          {
-            name: "CustomerName",
-            type: "STR(100)",
-            notNull: true,
-            primaryKey: false,
-          },
-          { name: "Email", type: "STR(100)", notNull: false, primaryKey: false }
-        );
-      } else if (lowerInput.includes("product")) {
-        fields.push(
-          {
-            name: "ProductID",
-            type: "STR(20)",
-            notNull: true,
-            primaryKey: true,
-          },
-          {
-            name: "ProductName",
-            type: "STR(100)",
-            notNull: true,
-            primaryKey: false,
-          },
-          { name: "Price", type: "REAL", notNull: true, primaryKey: false }
-        );
-      } else {
-        // Default fields
-        fields.push(
-          { name: "ID", type: "STR(20)", notNull: true, primaryKey: true },
-          { name: "Name", type: "STR(50)", notNull: true, primaryKey: false },
-          {
-            name: "CreatedDate",
-            type: "DATE",
-            notNull: false,
-            primaryKey: false,
-          }
-        );
-      }
-
-      // Create JSON data
-      const jsonData = {
-        name: tableName,
-        fields: fields,
-      };
-
-      return {
-        message: `I'll create a table named "${tableName}" with ${fields.length} fields. Processing now...`,
-        jsonData: jsonData,
-      };
-    }
-
-    // Default response for other inputs
-    return {
-      message:
-        "I'm here to help you create database tables. Let me know what kind of table you'd like to create.",
-      jsonData: null,
-    };
-  }
-
-  /**
-   * Execute table automation with the provided JSON data
-   */
-  async executeTableAutomation(jsonData) {
-    try {
-      this.displayMessage("Starting table creation process...", "system");
-
-      const agent = new EnhancedTableAutomationAgent(jsonData);
-      const result = await agent.run();
-
-      if (result.success) {
-        const report = agent.generateReport();
-        this.displayMessage(
-          `✅ Table "${jsonData.name}" created successfully with ${jsonData.fields.length} fields!`,
-          "system"
-        );
-
-        // Record this successful table creation in conversation history
-        this.recordConversation(null, null, {
-          tableName: jsonData.name,
-          timestamp: new Date().toISOString(),
-          fieldCount: jsonData.fields.length,
-        });
-      } else {
-        this.displayMessage(
-          `❌ Error creating table: ${result.error}`,
-          "system"
-        );
-      }
-    } catch (error) {
-      this.displayMessage(
-        `❌ Fatal error in automation: ${error.message}`,
-        "system"
-      );
-    }
-  }
-
-  /**
-   * Display a message in the chat interface
-   */
-  displayMessage(message, sender) {
-    // Simple implementation - would need customization based on actual UI
-    const chatContainer = document.getElementById("chatContainer");
-
-    if (chatContainer) {
-      const messageElement = document.createElement("div");
-      messageElement.className = `message ${sender}-message`;
-      messageElement.textContent = message;
-      chatContainer.appendChild(messageElement);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-
-      // Record user-AI conversations
-      if (sender === "user" || sender === "ai") {
-        this.recordConversation(
-          sender === "user" ? message : null,
-          sender === "ai" ? message : null
-        );
-      }
-    }
-  }
-}
-
-// Initialize the application
-document.addEventListener("DOMContentLoaded", () => {
-  // Create and initialize the manager
-  window.tableManager = new TableAutomationManager();
-
-  // Display welcome message
-  window.tableManager.displayMessage(
-    "Welcome to the Table Automation Assistant! I can help you create database tables. What would you like to create today?",
-    "ai"
-  );
-});
-
-// Example of direct JSON execution
-function executeJsonConfiguration(jsonData) {
-  const agent = new EnhancedTableAutomationAgent(jsonData);
-
-  agent.run().then((result) => {
-    if (result.success) {
-      console.log("✅ Automation completed successfully!");
-      console.log(agent.generateReport());
-
-      document.getElementById("status").textContent =
-        "Automation completed successfully";
-    } else {
-      console.error("❌ Automation failed:", result.error);
-
-      document.getElementById("status").textContent =
-        "Automation failed: " + result.error;
-    }
-  });
-}
-
-// Example JSON configuration that can be used directly
+// Example usage
 const JSON_Data = {
   delete: "PreviousTable", // Optional: name of table to delete first
   code: `class XppCodeD365FO  
-    {
-        public static void main(Args _args)
-        {
-           info("Welcome to the world of X++");
-           info("This is a simple example of X++ code.");
-        }
-    }`,
-  name: "CustomerOrders", // Table to create
+  {
+      public static void main(Args _args)
+      {
+         info("Welcome to the world of X++");
+         info("This is a simple example of X++ code.");
+      }
+  }`,
+  name: "MyTable", // Table to create
   fields: [
     {
-      name: "OrderID",
-      type: "STR(20)",
+      name: "Name",
+      type: "STR(50)",
       notNull: true,
       primaryKey: true,
     },
     {
-      name: "CustomerID",
-      type: "STR(20)",
+      name: "Age",
+      type: "INT",
+      notNull: false,
+      primaryKey: false,
+    },
+    {
+      name: "Email",
+      type: "STR(100)",
       notNull: true,
       primaryKey: false,
     },
     {
-      name: "OrderDate",
-      type: "DATE",
-      notNull: true,
-      primaryKey: false,
-    },
-    {
-      name: "TotalAmount",
-      type: "REAL",
-      notNull: true,
-      primaryKey: false,
-    },
-    {
-      name: "Status",
-      type: "STR(20)",
-      notNull: true,
+      name: "Phone",
+      type: "NUMBER",
+      notNull: false,
       primaryKey: false,
     },
   ],
 };
 
-// Uncomment this line to execute the sample JSON configuration on page load
-executeJsonConfiguration(JSON_Data);
+// Execute the automation
+async function runAutomation(data) {
+  try {
+    const agent = new EnhancedTableAutomationAgent(data);
+    const result = await agent.run();
+
+    if (result.success) {
+      console.log("✅ Automation completed successfully!");
+      console.log(agent.generateReport());
+    } else {
+      console.error("❌ Automation failed:", result.error);
+      console.log("Operations completed before failure:", result.operations);
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Fatal error in automation:", error);
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+}
+
+// Run the automation with the provided data
+// runAutomation(JSON_Data).then((result) => {
+//   // You can add additional post-processing here if needed
+//   if (result.success) {
+//     document.getElementById("status").textContent =
+//       "Automation completed successfully";
+//   } else {
+//     document.getElementById("status").textContent =
+//       "Automation failed: " + result.error;
+//   }
+// });
