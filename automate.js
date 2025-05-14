@@ -806,7 +806,7 @@ async function runAutomation(data) {
   }
 }
 
-// *** FIX APPLIED: Moved 'return Indexing;' outside the loop to allow processing all tables.
+// *** FIX APPLIED: Separated the check for the TotalTable function from the variable declaration.
 // *** DEPENDENCIES: This function relies on global or environment-provided functions TotalTable, ShowTableSchema, and ShowTableData which are not defined here.
 async function DoIndexing() {
   const Indexing = {};
@@ -815,21 +815,45 @@ async function DoIndexing() {
   const codeTextArea = document.getElementById("xppCode");
   Indexing.code = codeTextArea ? codeTextArea.value : "Code element not found.";
 
-  // *** DEPENDENCY: TotalTable() must be a function available in the environment that returns an array of table names.
-  const TotalTable = typeof TotalTable === 'function' ? await TotalTable() : [];
-  if (!Array.isArray(TotalTable)) {
-      console.error("DoIndexing: TotalTable() did not return an array.");
-      return Indexing; // Return with just the code if table list is invalid
+  // Check if the TotalTable function exists globally or in the current scope.
+  let TotalTableList = [];
+  // Use window.TotalTable if it's expected to be a global function provided by the environment
+  if (typeof window.TotalTable === 'function') {
+      try {
+          // Call the function and assign the result to the local variable.
+          TotalTableList = await window.TotalTable();
+      } catch (error) {
+          console.error(`DoIndexing: Error calling window.TotalTable(): ${error.message}`);
+          // TotalTableList remains [] on error.
+      }
+  } else {
+       // Fallback check if TotalTable is defined in the current scope but not global window
+      if (typeof TotalTable === 'function') {
+         try {
+            TotalTableList = await TotalTable();
+         } catch (error) {
+            console.error(`DoIndexing: Error calling scoped TotalTable(): ${error.message}`);
+         }
+      } else {
+         console.warn("DoIndexing: TotalTable function not found in the environment (neither global window.TotalTable nor scoped TotalTable).");
+      }
+  }
+
+  if (!Array.isArray(TotalTableList)) {
+      console.error("DoIndexing: TotalTable() (or equivalent) did not return an array.");
+      TotalTableList = []; // Ensure it's an array to prevent loop errors
   }
 
   const tableData = [];
-  for (let i = 0; i < TotalTable.length; i++) {
-    const table = TotalTable[i];
+  for (let i = 0; i < TotalTableList.length; i++) {
+    const table = TotalTableList[i];
     console.log(`DoIndexing: Processing table: ${table}`);
     try {
         // *** DEPENDENCIES: ShowTableSchema and ShowTableData must be functions available in the environment.
-        const schema = typeof ShowTableSchema === 'function' ? await ShowTableSchema(table) : 'ShowTableSchema function not available';
-        const data = typeof ShowTableData === 'function' ? await ShowTableData(table) : 'ShowTableData function not available';
+        // Check for global window.ShowTableSchema and ShowTableData first
+        const schema = typeof window.ShowTableSchema === 'function' ? await window.ShowTableSchema(table) : (typeof ShowTableSchema === 'function' ? await ShowTableSchema(table) : 'ShowTableSchema function not available');
+        const data = typeof window.ShowTableData === 'function' ? await window.ShowTableData(table) : (typeof ShowTableData === 'function' ? await ShowTableData(table) : 'ShowTableData function not available');
+
 
         tableData.push({
           name: table,
@@ -886,7 +910,7 @@ async function aiRes(userInput, history) {
           Chat History:
           ${formattedHistory}
 
-          // *** DEPENDENCY: DoIndexing() must be available and return valid data.
+          // *** DEPENDENCY: DoIndexing() must be available and return valid data, though it's now more robust to missing dependency functions.
           Inding(all available data in database): ${await DoIndexing()}
 
           User Input: ${userInput}
