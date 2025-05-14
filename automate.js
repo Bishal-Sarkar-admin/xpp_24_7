@@ -872,7 +872,7 @@ async function aiRes(userInput, history) {
 
   try {
     // *** DEPENDENCY: Assumes the API is running and accessible at this URL and accepts POST requests with JSON body.
-    const response = await fetch("http://127.0.0.1:3000/api/ai", {
+    const response = await fetch("https://server100sql.onrender.com/api/ai", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
