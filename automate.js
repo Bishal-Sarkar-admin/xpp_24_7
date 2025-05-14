@@ -1662,7 +1662,7 @@ async function runAutomation(data) {
 
 // Function to interact with the AI API, including chat history, database schema, and code editor content.
 // This function prepares the prompt with relevant context for the AI.
-async function aiRes(userInput, history, databaseSchemas, codeEditorContent) {
+async function aiRes(UserRequest, history, databaseSchemas, codeEditorContent) {
   // Format the history into a simple string for the prompt
   // Limiting history length to avoid excessively long prompts
   const historyLimit = 20; // Increased history limit
@@ -1693,7 +1693,7 @@ async function aiRes(userInput, history, databaseSchemas, codeEditorContent) {
   console.log(codeEditorContent || "Code editor is empty.");
   console.log("--- End Code Editor Content ---");
   console.log("--- Current User Input ---");
-  console.log(userInput);
+  console.log(UserRequest);
   console.log("--- End User Input ---");
 
   try {
@@ -1722,7 +1722,7 @@ async function aiRes(userInput, history, databaseSchemas, codeEditorContent) {
           ${codeEditorContent || "Code editor is empty."}
           --- End Code Editor Content ---
 
-          User Input: ${userInput}
+          User Input: ${UserRequest}
 
           Instructions:
           1. Analyze the User Input and Chat History to understand the user's intent and any implied sequence of operations (delete, create table, add fields, add indexes, run X++ code).
@@ -1756,10 +1756,10 @@ async function aiRes(userInput, history, databaseSchemas, codeEditorContent) {
 
 // Event listener for the run button
 document.getElementById("btn_run").addEventListener("click", async () => {
-  const userInputElement = document.getElementById("userInput");
-  const userInput = userInputElement ? userInputElement.value : "";
+  const UserRequestElement = document.getElementById("UserRequest");
+  const UserRequest = UserRequestElement ? UserRequestElement.value : "";
 
-  if (!userInput.trim()) {
+  if (!UserRequest.trim()) {
     console.warn("User input is empty. Please enter a command.");
     // Optionally provide user feedback in the UI
     showMessage("Please enter a command.", "info"); // User feedback
@@ -1767,12 +1767,12 @@ document.getElementById("btn_run").addEventListener("click", async () => {
   }
 
   // Add user input to history BEFORE sending the request
-  chatHistory.push({ role: "User", content: userInput });
+  chatHistory.push({ role: "User", content: UserRequest });
   console.log("Chat History Updated (User):", chatHistory);
 
   // Clear the input field after capturing the value
-  if (userInputElement) {
-    userInputElement.value = "";
+  if (UserRequestElement) {
+    UserRequestElement.value = "";
   }
 
   // *** ADDED: Get database schema and code editor content for AI context ***
@@ -1823,7 +1823,7 @@ document.getElementById("btn_run").addEventListener("click", async () => {
     console.log("Calling AI Response API with context...");
     // Call aiRes with user input, chat history, database schemas, and code editor content
     const response = await aiRes(
-      userInput,
+      UserRequest,
       chatHistory,
       databaseSchemas,
       codeEditorContent
