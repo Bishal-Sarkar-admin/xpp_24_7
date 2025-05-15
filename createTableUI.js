@@ -161,9 +161,7 @@ function createNewTable() {
   }
 
   if (!validateInputName(tableName)) {
-    alert(
-      "Table name can only contain letters, numbers, and underscores"
-    );
+    alert("Table name can only contain letters, numbers, and underscores");
     return;
   }
 
@@ -211,7 +209,7 @@ function createNewTable() {
 
   tableCreateSection.appendChild(tableContainer);
   closeTableNameModal();
-  
+
   // Add default RacID field automatically
   currentTableId = tableId;
   addDefaultRacIDField(tableId);
@@ -219,34 +217,34 @@ function createNewTable() {
 
 function addDefaultRacIDField(tableId) {
   const table = document.querySelector(`#${tableId} table tbody`);
-  
+
   // Create a new row for RacID
   const newRow = table.insertRow();
-  
+
   // CID cell
   const cidCell = newRow.insertCell();
   cidCell.textContent = "0";
-  
+
   // Name cell
   const nameCell = newRow.insertCell();
   nameCell.textContent = "RacID";
-  
+
   // Type cell
   const typeCell = newRow.insertCell();
-  typeCell.textContent = "INTEGER";
-  
+  typeCell.textContent = "VARCHAR(30)";
+
   // Not Null cell
   const notNullCell = newRow.insertCell();
   notNullCell.textContent = "1";
-  
+
   // Default Value cell
   const defaultValueCell = newRow.insertCell();
   defaultValueCell.textContent = "null";
-  
+
   // Primary Key cell
   const primaryKeyCell = newRow.insertCell();
-  primaryKeyCell.textContent = "1";
-  
+  primaryKeyCell.textContent = "0";
+
   // Actions cell
   const actionsCell = newRow.insertCell();
   const removeButton = document.createElement("button");
@@ -276,9 +274,7 @@ function addNewField() {
   const notNull = document.getElementById("notNull").checked ? 1 : 0;
   const defaultValue =
     document.getElementById("defaultValue").value.trim() || "null";
-  const primaryKey = document.getElementById("primaryKey").checked
-    ? 1
-    : 0;
+  const primaryKey = document.getElementById("primaryKey").checked ? 1 : 0;
 
   if (fieldName === "") {
     alert("Please enter a field name");
@@ -286,9 +282,7 @@ function addNewField() {
   }
 
   if (!validateInputName(fieldName)) {
-    alert(
-      "Field name can only contain letters, numbers, and underscores"
-    );
+    alert("Field name can only contain letters, numbers, and underscores");
     return;
   }
 
@@ -384,9 +378,7 @@ function jsonToSQLite(jsonDef) {
 
     // Validate field name
     if (!validateInputName(field.name)) {
-      throw new Error(
-        `Field name "${field.name}" contains invalid characters`
-      );
+      throw new Error(`Field name "${field.name}" contains invalid characters`);
     }
 
     let fieldDef = `    "${field.name}" ${field.type}`;
@@ -401,20 +393,14 @@ function jsonToSQLite(jsonDef) {
     }
 
     // Add DEFAULT value if specified and not "null"
-    if (
-      field.defaultValue !== undefined &&
-      field.defaultValue !== "null"
-    ) {
+    if (field.defaultValue !== undefined && field.defaultValue !== "null") {
       // Check if default value needs quotes (for string types)
       if (
         field.type.includes("VARCHAR") ||
         field.type === "TEXT" ||
         field.type === "DATE"
       ) {
-        fieldDef += ` DEFAULT '${field.defaultValue.replace(
-          /'/g,
-          "''"
-        )}'`;
+        fieldDef += ` DEFAULT '${field.defaultValue.replace(/'/g, "''")}'`;
       } else {
         fieldDef += ` DEFAULT ${field.defaultValue}`;
       }
@@ -436,8 +422,13 @@ function jsonToSQLite(jsonDef) {
   sql += fieldDefinitions.join(",\n");
 
   // Add AUTOINCREMENT to RacID field
-  if (jsonDef.fields.some(field => field.name === "RacID" && field.primaryKey)) {
-    sql = sql.replace('"RacID" INTEGER NOT NULL PRIMARY KEY', '"RacID" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
+  if (
+    jsonDef.fields.some((field) => field.name === "RacID" && field.primaryKey)
+  ) {
+    sql = sql.replace(
+      '"RacID" INTEGER NOT NULL PRIMARY KEY',
+      '"RacID" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT'
+    );
   }
 
   // Close the SQL statement
@@ -521,7 +512,9 @@ async function saveTable(tableId) {
       if (res_data.data) {
         showToast("Table created successfully in database!");
       } else {
-        showToast("Table creation response received, but status unclear");
+        showToast(
+          `Table creation response received, status: ${tableResponse.status}`
+        );
       }
     } catch (e) {
       console.error("API Error:", e);
