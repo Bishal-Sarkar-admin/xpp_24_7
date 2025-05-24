@@ -77,7 +77,7 @@
           };
 
           const ErrorFixedResponse = await fetch(
-            "https://server100sql.onrender.com/api/ai",
+            "https://advance-server-tu9s.onrender.com/api/ai",
             {
               method: "POST",
               headers: {
