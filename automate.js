@@ -70,7 +70,7 @@ const indexCache = new Map(); // Cache for index creation attempts (UI or SQL)
  */
 async function TotalTable_New() {
   try {
-    const tableResponse = await fetch("https://server100sql.onrender.com/api/select", {
+    const tableResponse = await fetch("https://advance-server-tu9s.onrender.com/api/select", {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -184,7 +184,7 @@ async function TotalTable_New() {
 async function ShowTableSchema_New(tableName) {
   try {
     // No spinner/message here, as it's called by TotalTable_New or fetchAllTableSchemas which handle it
-    const schemaResponse = await fetch("https://server100sql.onrender.com/api/select", {
+    const schemaResponse = await fetch("https://advance-server-tu9s.onrender.com/api/select", {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -214,7 +214,7 @@ async function ShowTableSchema_New(tableName) {
 async function ShowTableData_New(tableName) {
   try {
     // No spinner/message here, as it's called by TotalTable_New which handles it
-    const TableDataResponse = await fetch("https://server100sql.onrender.com/api/select", {
+    const TableDataResponse = await fetch("https://advance-server-tu9s.onrender.com/api/select", {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -244,7 +244,7 @@ async function fetchAllTableSchemas() {
   const schemas = {};
   try {
     // First, get all table names
-    const tableNamesResponse = await fetch("https://server100sql.onrender.com/api/select", {
+    const tableNamesResponse = await fetch("https://advance-server-tu9s.onrender.com/api/select", {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -1697,7 +1697,7 @@ async function aiRes(UserRequest, history, databaseSchemas, codeEditorContent) {
   console.log("--- End User Input ---");
 
   try {
-    const response = await fetch("https://server100sql.onrender.com/api/ai", {
+    const response = await fetch("https://advance-server-tu9s.onrender.com/api/ai", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
