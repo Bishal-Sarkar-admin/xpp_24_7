@@ -115,6 +115,7 @@ async function processXpp() {
 
   toggleLoading(true);
   try {
+       const DataBaseData = await TableSchema_And_Data_Mind_Map();
     const link= localStorage.getItem("link")||"https://advance-server-tu9s.onrender.com/api/ai";
     // Initial AI analysis
     const initialResponse = await fetch(link, {
@@ -145,7 +146,8 @@ async function processXpp() {
     }
   ]
 }
-
+,
+Existing Tables Data From DataBase: ${DataBaseData},
 Code to analyze:
 ${elements.xppCode.value.trim()}`,
       }),
