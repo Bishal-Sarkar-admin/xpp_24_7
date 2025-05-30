@@ -1,3 +1,4 @@
+
 async function TotalTable_Mind_Map() {
   try {
     const tableResponse = await fetch(
@@ -11,7 +12,7 @@ async function TotalTable_Mind_Map() {
         }),
       }
     );
-
+    
     if (!tableResponse.ok) {
       throw new Error(
         `HTTP error! status: ${tableResponse.status} - ${tableResponse.statusText}`
@@ -19,27 +20,39 @@ async function TotalTable_Mind_Map() {
     }
 
     const tableData = await tableResponse.json();
+    console.log("📋 Raw table data:", tableData); // Debug log
+    
+    // Ensure tableData is an array
+    if (!Array.isArray(tableData)) {
+      console.error("❌ tableData is not an array:", typeof tableData, tableData);
+      return [];
+    }
+    
     const textData = document.getElementById("xppCode");
-
+    
     // Initialize as array, not object
     const FilterTableData = [];
-
+    
     // Check if textData exists and has content
     if (textData && textData.textContent) {
       const textContent = textData.textContent.toLowerCase();
-
+      console.log("🔍 Filtering tables based on text content");
+      
       for (const table of tableData) {
         // Check if table name is mentioned in the text content
-        if (textContent.includes(table.name.toLowerCase())) {
-          FilterTableData.push(table);
+        if (table && table.name && textContent.includes(table.name.toLowerCase())) {
+          FilterTableData.push(table); 
         }
       }
+      
+      console.log(`✅ Found ${FilterTableData.length} matching tables out of ${tableData.length} total tables`);
+      return FilterTableData;
     } else {
       // If no filter text, return all tables
+      console.log(`📊 No filter applied, returning all ${tableData.length} tables`);
       return tableData;
     }
-
-    return FilterTableData;
+    
   } catch (e) {
     console.error("❌ Error in TotalTable:", e);
     return [];
@@ -49,17 +62,37 @@ async function TotalTable_Mind_Map() {
 async function TableSchema_And_Data_Mind_Map() {
   try {
     const allTables = await TotalTable_Mind_Map();
+    console.log("🔍 Received tables:", allTables); // Debug log
 
-    if (!allTables || allTables.length === 0) {
-      console.log("No tables found");
+    // Add robust type checking
+    if (!allTables) {
+      console.log("❌ allTables is null or undefined");
       return [];
     }
 
+    if (!Array.isArray(allTables)) {
+      console.error("❌ allTables is not an array:", typeof allTables, allTables);
+      return [];
+    }
+
+    if (allTables.length === 0) {
+      console.log("ℹ️ No tables found");
+      return [];
+    }
+
+    console.log(`📊 Processing ${allTables.length} tables...`);
     const result = [];
 
     // Process each table
     for (const table of allTables) {
+      // Validate table object
+      if (!table || typeof table !== 'object' || !table.name) {
+        console.warn("⚠️ Invalid table object:", table);
+        continue;
+      }
+
       const tableName = table.name;
+      console.log(`🔧 Processing table: ${tableName}`);
 
       try {
         // Get schema
@@ -88,7 +121,7 @@ async function TableSchema_And_Data_Mind_Map() {
             method: "POST",
             headers,
             body: JSON.stringify({
-              query: `SELECT * FROM ${tableName};`,
+              query: `SELECT * FROM ${tableName} LIMIT 100;`, // Added LIMIT for safety
               params: [],
             }),
           }
@@ -104,13 +137,12 @@ async function TableSchema_And_Data_Mind_Map() {
         result.push({
           name: tableName,
           schema: schemaData[0]?.sql || `No schema found for ${tableName}`,
-          data: tableData || [],
-          rowCount: tableData ? tableData.length : 0,
+          data: Array.isArray(tableData) ? tableData : [],
+          rowCount: Array.isArray(tableData) ? tableData.length : 0
         });
-
-        console.log(
-          `✅ Processed table: ${tableName} (${tableData?.length || 0} rows)`
-        );
+        
+        console.log(`✅ Processed table: ${tableName} (${Array.isArray(tableData) ? tableData.length : 0} rows)`);
+        
       } catch (tableError) {
         console.error(`❌ Error processing table ${tableName}:`, tableError);
         // Still add the table with error info
@@ -119,11 +151,12 @@ async function TableSchema_And_Data_Mind_Map() {
           schema: `Error retrieving schema: ${tableError.message}`,
           data: [],
           rowCount: 0,
-          error: tableError.message,
+          error: tableError.message
         });
       }
     }
 
+    console.log(`🎉 Successfully processed ${result.length} tables`);
     return result;
   } catch (e) {
     console.error("❌ Error in TableSchema_And_Data_Mind_Map:", e);
