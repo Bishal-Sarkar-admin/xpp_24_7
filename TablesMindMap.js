@@ -23,8 +23,8 @@ async function TotalTable_Mind_Map() {
     console.log("📋 Raw table data:", tableData); // Debug log
     
     // Ensure tableData is an array
-    if (!Array.isArray(tableData)) {
-      console.error("❌ tableData is not an array:", typeof tableData, tableData);
+    if (!Array.isArray(tableData.data)) {
+      console.error("❌ tableData is not an array:", typeof tableData.data, tableData.data);
       return [];
     }
     
@@ -38,7 +38,7 @@ async function TotalTable_Mind_Map() {
       const textContent = textData.textContent.toLowerCase();
       console.log("🔍 Filtering tables based on text content");
       
-      for (const table of tableData) {
+      for (const table of tableData.data) {
         // Check if table name is mentioned in the text content
         if (table && table.name && textContent.includes(table.name.toLowerCase())) {
           FilterTableData.push(table); 
