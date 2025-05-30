@@ -116,6 +116,7 @@ async function processXpp() {
   toggleLoading(true);
   try {
        const DataBaseData = await TableSchema_And_Data_Mind_Map();
+       DataBaseData=DataBaseData?DataBaseData:[];
     const link= localStorage.getItem("link")||"https://advance-server-tu9s.onrender.com/api/ai";
     // Initial AI analysis
     const initialResponse = await fetch(link, {
