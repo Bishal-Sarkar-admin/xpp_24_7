@@ -233,20 +233,22 @@ ${elements.xppCode.value.trim()}`,
         query: `Analyze X++ code with execution results and provide final output.
                 
 X++ Code:
-${elements.xppCode.value.trim()}
+${elements.xppCode.value.trim()},
 
 Initial Analysis:
-${JSON.stringify(parsedInitial, null, 2)}
+${JSON.stringify(parsedInitial, null, 2)},
 
 SQL Results:
-${JSON.stringify(sqlResults, null, 2)}
+${JSON.stringify(sqlResults, null, 2)},
 
 User Input (from new Dialog("input")):
 ${
   document.getElementById("userInput")
     ? document.getElementById("userInput").value
     : ""
-}
+},
+
+Existing Tables Data From DataBase: ${DataBaseData},
 
 Provide final execution prediction in this JSON format:
 {
