@@ -1,4 +1,3 @@
-
 async function TotalTable_Mind_Map() {
   try {
     const tableResponse = await fetch(
@@ -22,9 +21,9 @@ async function TotalTable_Mind_Map() {
     const tableData = await tableResponse.json();
     console.log("📋 Raw table data:", tableData); // Debug log
     
-    // Ensure tableData is an array
+    // Ensure tableData.data is an array
     if (!Array.isArray(tableData.data)) {
-      console.error("❌ tableData is not an array:", typeof tableData.data, tableData.data);
+      console.error("❌ tableData.data is not an array:", typeof tableData.data, tableData.data);
       return [];
     }
     
@@ -45,12 +44,12 @@ async function TotalTable_Mind_Map() {
         }
       }
       
-      console.log(`✅ Found ${FilterTableData.length} matching tables out of ${tableData.length} total tables`);
+      console.log(`✅ Found ${FilterTableData.length} matching tables out of ${tableData.data.length} total tables`);
       return FilterTableData;
     } else {
-      // If no filter text, return all tables
-      console.log(`📊 No filter applied, returning all ${tableData.length} tables`);
-      return tableData;
+      // If no filter text, return all tables - FIXED: return tableData.data instead of tableData
+      console.log(`📊 No filter applied, returning all ${tableData.data.length} tables`);
+      return tableData.data;
     }
     
   } catch (e) {
@@ -131,12 +130,14 @@ async function TableSchema_And_Data_Mind_Map() {
           throw new Error(`Failed to get data for ${tableName}`);
         }
 
-        const tableData = await dataResponse.json();
+        const tableDataResponse = await dataResponse.json();
+        // FIXED: Extract the actual data array from the response
+        const tableData = Array.isArray(tableDataResponse.data) ? tableDataResponse.data : tableDataResponse;
 
         // Add to result
         result.push({
           name: tableName,
-          schema: schemaData[0]?.sql || `No schema found for ${tableName}`,
+          schema: (schemaData.data && schemaData.data[0]?.sql) || `No schema found for ${tableName}`,
           data: Array.isArray(tableData) ? tableData : [],
           rowCount: Array.isArray(tableData) ? tableData.length : 0
         });
