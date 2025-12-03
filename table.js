@@ -10,7 +10,7 @@ const headers = {
 
 async function TotalTable() {
   try {
-    const tableResponse = await fetch("https://advance-server-tu9s.onrender.com/api/select", {
+    const tableResponse = await fetch("https://advance-server-lk2s.onrender.com/api/select", {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -90,7 +90,7 @@ async function TotalTable() {
 
 async function ShowTableSchema(tableName) {
   try {
-    const schemaResponse = await fetch("https://advance-server-tu9s.onrender.com/api/select", {
+    const schemaResponse = await fetch("https://advance-server-lk2s.onrender.com/api/select", {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -122,7 +122,7 @@ async function ShowTableSchema(tableName) {
 
 async function ShowTableData(tableName) {
   try {
-    const TableDataResponse = await fetch("https://advance-server-tu9s.onrender.com/api/select", {
+    const TableDataResponse = await fetch("https://advance-server-lk2s.onrender.com/api/select", {
       method: "POST",
       headers,
       body: JSON.stringify({
