@@ -66,7 +66,7 @@ async function executeQuery(type, query) {
     throw new Error("Invalid query: Query must be a non-empty string");
   }
   try {
-    const response = await fetch(`https://advance-server-tu9s.onrender.com/api/${type}`, {
+    const response = await fetch(`https://advance-server-lk2s.onrender.com/api/${type}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -117,7 +117,7 @@ async function processXpp() {
   try {
        const DataBaseData = await TableSchema_And_Data_Mind_Map();
      
-    const link= localStorage.getItem("link")||"https://advance-server-tu9s.onrender.com/api/ai";
+    const link= localStorage.getItem("link")||"https://advance-server-lk2s.onrender.com/api/ai";
     // Initial AI analysis
     const initialResponse = await fetch(link, {
       method: "POST",
