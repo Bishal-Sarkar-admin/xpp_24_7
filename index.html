@@ -207,7 +207,7 @@
             headers: {
               "Content-Type": "application/json",
               "X-API-KEY":
-                localStorage.getItem("ciphertext") || "default_api_key",
+                localStorage.getItem("key"),
             },
             body: JSON.stringify({
               code: localStorage.getItem("code"),
