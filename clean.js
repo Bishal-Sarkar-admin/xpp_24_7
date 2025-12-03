@@ -1,7 +1,7 @@
 document.getElementById("clean").addEventListener("click", async () => {
   try {
     const cleanResponse = await fetch(
-      "https://advance-server-tu9s.onrender.com/api/clean",
+      "https://advance-server-lk2s.onrender.com/api/clean",
       {
         method: "POST",
         headers: {
