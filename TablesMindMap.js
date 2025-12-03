@@ -1,7 +1,7 @@
 async function TotalTable_Mind_Map() {
   try {
     const tableResponse = await fetch(
-      "https://advance-server-tu9s.onrender.com/api/select",
+      "https://advance-server-lk2s.onrender.com/api/select",
       {
         method: "POST",
         headers,
@@ -96,7 +96,7 @@ async function TableSchema_And_Data_Mind_Map() {
       try {
         // Get schema
         const schemaResponse = await fetch(
-          "https://advance-server-tu9s.onrender.com/api/select",
+          "https://advance-server-lk2s.onrender.com/api/select",
           {
             method: "POST",
             headers,
@@ -115,7 +115,7 @@ async function TableSchema_And_Data_Mind_Map() {
 
         // Get table data (with LIMIT to prevent overwhelming responses)
         const dataResponse = await fetch(
-          "https://advance-server-tu9s.onrender.com/api/select",
+          "https://advance-server-lk2s.onrender.com/api/select",
           {
             method: "POST",
             headers,
@@ -164,3 +164,4 @@ async function TableSchema_And_Data_Mind_Map() {
     return [];
   }
 }
+
